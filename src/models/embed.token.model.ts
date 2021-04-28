@@ -14,5 +14,5 @@ export const EmbedTokenSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const EmbedToken = mongoose.model('EmbedToken', EmbedTokenSchema, process.env.DNA_COSMOS_COLLECTIONNAME);
+const EmbedToken = mongoose.model('EmbedToken', EmbedTokenSchema, process.env.DNA_CUSTOM_ANALYTICS_COSMOS_COLLECTIONNAME);
 export default EmbedToken;

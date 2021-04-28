@@ -79,6 +79,12 @@ app.use((error: any, req: any, res: any, next: any) => {
   });
 });
 
+const port = process.env.port || process.env.PORT || 6000;
+app.listen(port, () => {
+  logger.warn(`Listening on port: ${port}`);
+});
+
+
 function connectToCosmos() {
   logger.warn(`Connecting to COSMOS...`);
 
@@ -86,7 +92,7 @@ function connectToCosmos() {
   const COSMOS_dbName = process.env.DNA_CUSTOM_ANALYTICS_COSMOS_DBNAME;
   const COSMOS_collectionName = process.env.DNA_CUSTOM_ANALYTICS_COSMOS_COLLECTIONNAME;
 
-  // logger.info(`COSMOS_connectionString: ${COSMOS_connectionString}`);
+  logger.info(`COSMOS_connectionString: ${COSMOS_connectionString}`);
   logger.info(`COSMOS_dbName: ${COSMOS_dbName}`);
   logger.info(`COSMOS_collectionName: ${COSMOS_collectionName}`);
 
