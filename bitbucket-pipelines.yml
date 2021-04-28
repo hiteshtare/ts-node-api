@@ -1,0 +1,87 @@
+definitions:
+  services:
+    docker:
+      memory: 7128
+options:
+  docker: true
+  size: 2x
+pipelines:
+  branches:
+    develop-cystine-aks:
+      - step:
+          name: Build feedaback, publish and deploy to DEV
+          deployment: test
+          trigger: automatic
+          image:
+            name: omnipresenceacr.azurecr.io/indegene.io/bitbucket-pipeline-aks:20190124
+            username: $ACR_GLOBAL_NAME
+            password: $ACR_GLOBAL_PASSWORD
+            email: indegene_devops@indegene.com
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - export BITBUCKET_COMMIT_SHORT=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+
+            - az login -u jenkins@Omnipresence.io -p ${GLOBAL_USER_PASSWORD}
+            - az acr login --name omnipresenceacr
+            - az aks get-credentials --resource-group ${AKS_DEV_LABS_GLOBAL_GROUP} --name ${AKS_DEV_LABS_GLOBAL_CLUSTER} --admin
+            - TAG="DEV-${BITBUCKET_COMMIT}-${BITBUCKET_BUILD_NUMBER}"
+            - (umask  077 ; echo $MY_SSH_KEY | base64 --decode > ~/.ssh/id_rsa)
+            - git config --global user.email "Indegene_DevOps@indegene.com"
+            - git config --global user.name "Indegene-DevOps"
+            - git clone git@bitbucket.org:torontoengineering/io2-space-config.git
+            - chmod +x ./io2-space-config/dev-labs-global/settings
+            - . ./io2-space-config/dev-labs-global/settings
+            -  ##cat "src/config/endpoints.config.template" > "src/config/endpoints.config.ts"
+            -  # replace APP_VERSION value
+
+            - sed "s,<RELEASE_VERSION,${RELEASE_VERSION}, ; s,<BITBUCKET_BUILD_NUMBER>,${BITBUCKET_BUILD_NUMBER}, ; s,<ENTRY>,${ENTRY}, ; s,<DNA_LDKEY>,${DNA_LDKEY}, ; s,<SESSIONSTACK>,${SESSIONSTACK}, ; s,<GLOBAL>,${ENTRY}," "./angular-src/src/app/core/config/endpoints.config.template" > "./angular-src/src/app/core/config/endpoints.config.ts"
+
+            - docker build -f ./Dockerfile . -t omnipresenceacr.azurecr.io/indegene.io/dna-callnotes:${RELEASE_VERSION}.${BITBUCKET_BUILD_NUMBER}
+            - docker push "omnipresenceacr.azurecr.io/indegene.io/dna-callnotes:${RELEASE_VERSION}.${BITBUCKET_BUILD_NUMBER}"
+            - sed -i "s/BITBUCKET_COMMIT/${RELEASE_VERSION}.${BITBUCKET_BUILD_NUMBER}/" k8s-manifest.yml
+            - sed -i "s/\(agentpool.\).*/\1 ${AKS_DEV_LABS_GLOBAL_AGENTPOOL}/" k8s-manifest.yml
+            - cat k8s-manifest.yml
+            - kubectl apply -f k8s-manifest.yml -n ${AKS_DEV_LABS_GLOBAL_NAMESPACE}
+            - git remote set-url origin ssh://git@bitbucket.org/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}.git
+            - git tag ${RELEASE_VERSION}.${BITBUCKET_BUILD_NUMBER}
+            - git push origin tag ${RELEASE_VERSION}.${BITBUCKET_BUILD_NUMBER}
+
+      - step:
+          name: Build feedaback, publish and deploy to QA
+          deployment: staging
+          trigger: manual
+          image:
+            name: omnipresenceacr.azurecr.io/indegene.io/bitbucket-pipeline-aks:20190124
+            username: $ACR_GLOBAL_NAME
+            password: $ACR_GLOBAL_PASSWORD
+            email: indegene_devops@indegene.com
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - export BITBUCKET_COMMIT_SHORT=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+            - az login -u jenkins@Omnipresence.io -p ${GLOBAL_USER_PASSWORD}
+            - az acr login --name omnipresenceacr
+            - az aks get-credentials --resource-group ${AKS_QA_LABS_GLOBAL_GROUP} --name ${AKS_QA_LABS_GLOBAL_CLUSTER} --admin
+            - (umask  077 ; echo $MY_SSH_KEY | base64 --decode > ~/.ssh/id_rsa)
+            - git config --global user.email "Indegene_DevOps@indegene.com"
+            - git config --global user.name "Indegene-DevOps"
+            - git clone git@bitbucket.org:torontoengineering/io2-space-config.git
+            - chmod +x ./io2-space-config/qa1-labs-global/settings
+            - . ./io2-space-config/qa1-labs-global/settings
+            -  ##cat "src/config/endpoints.config.template" > "src/config/endpoints.config.ts"
+            -  # replace APP_VERSION value
+
+            - sed "s,<RELEASE_VERSION,${RELEASE_VERSION}, ; s,<BITBUCKET_BUILD_NUMBER>,${BITBUCKET_BUILD_NUMBER}, ; s,<ENTRY>,${ENTRY}, ; s,<DNA_LDKEY>,${DNA_LDKEY}, ; s,<SESSIONSTACK>,${SESSIONSTACK}, ; s,<GLOBAL>,${ENTRY}," "./angular-src/src/app/core/config/endpoints.config.template" > "./angular-src/src/app/core/config/endpoints.config.ts"
+
+            - docker build -f ./Dockerfile . -t omnipresenceacr.azurecr.io/indegene.io/dna-callnotes:qa-${RELEASE_VERSION}.${BITBUCKET_BUILD_NUMBER}
+            - docker push "omnipresenceacr.azurecr.io/indegene.io/dna-callnotes:qa-${RELEASE_VERSION}.${BITBUCKET_BUILD_NUMBER}"
+            - sed -i "s/BITBUCKET_COMMIT/qa-${RELEASE_VERSION}.${BITBUCKET_BUILD_NUMBER}/" k8s-manifest.yml
+            - sed -i "s/\(agentpool.\).*/\1 ${AKS_QA_LABS_GLOBAL_AGENTPOOL}/" k8s-manifest.yml
+            - cat k8s-manifest.yml
+            - kubectl apply -f k8s-manifest.yml -n ${AKS_QA_LABS_GLOBAL_NAMESPACE}
+            - curl -I -u jenkins@omnipresence.io:${JENKINS_API_KEY} "https://jenkins.global.omnipresence.io/job/JIRA-status-update-DNA/build?token=jira"
