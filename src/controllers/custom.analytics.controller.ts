@@ -13,7 +13,7 @@ import { getLoggerLevel } from '../utils/common.util';
 const logger = getLoggerLevel();
 
 export async function getAllEmbedTokens(req: any, res: any, next: any): Promise<void> {
-  logger.info(`getAllEmbedTokens`);
+  logger.warn(`getAllEmbedTokens`);
 
   try {
     // if (token) {
@@ -27,7 +27,7 @@ export async function getAllEmbedTokens(req: any, res: any, next: any): Promise<
       message: 'List of embedTokens fetched successfully',
       payload: embedTokens
     });
-    logger.warn(`List of embedTokens fetched successfully`);
+    logger.info(`List of embedTokens fetched successfully`);
 
     // } else {
     //   res.status(200).json({
@@ -37,7 +37,7 @@ export async function getAllEmbedTokens(req: any, res: any, next: any): Promise<
     //   });
     // }
   } catch (err) {
-    logger.warn(err);
+    logger.error(err);
     res.status(500).json({
       success: false,
       message: err
@@ -47,7 +47,7 @@ export async function getAllEmbedTokens(req: any, res: any, next: any): Promise<
 
 
 export async function createEmbedToken(req: any, res: any, next: any): Promise<void> {
-  logger.info(`createEmbedToken`);
+  logger.warn(`createEmbedToken`);
 
   try {
     const hashSystemUserId = crypto.createHash('md5').update(req.body.systemUserId).digest('hex');
@@ -66,10 +66,10 @@ export async function createEmbedToken(req: any, res: any, next: any): Promise<v
       message: 'Embed Token created successfully',
       payload: result
     });
-    logger.warn(`Embed Token created successfully`);
+    logger.info(`Embed Token created successfully`);
 
   } catch (err) {
-    logger.warn(err);
+    logger.error(err);
     res.status(500).json({
       success: false,
       message: err
@@ -78,7 +78,7 @@ export async function createEmbedToken(req: any, res: any, next: any): Promise<v
 };
 
 export async function updateEmbedTokenById(req: any, res: any, next: any): Promise<void> {
-  logger.info(`updateEmbedTokenById`);
+  logger.warn(`updateEmbedTokenById`);
 
   try {
     const id = req.params.embedTokenId;
@@ -100,7 +100,7 @@ export async function updateEmbedTokenById(req: any, res: any, next: any): Promi
         message: "EmbedToken updated successfully",
         payload: updated_embedToken
       });
-      logger.warn(`EmbedToken updated successfully`);
+      logger.info(`EmbedToken updated successfully`);
 
     } else {
       res.status(404).json({
@@ -111,7 +111,7 @@ export async function updateEmbedTokenById(req: any, res: any, next: any): Promi
 
     }
   } catch (err) {
-    logger.warn(err);
+    logger.error(err);
     res.status(500).json({
       success: false,
       message: err
@@ -120,7 +120,7 @@ export async function updateEmbedTokenById(req: any, res: any, next: any): Promi
 };
 
 export async function getEmbedTokenById(req: any, res: any, next: any): Promise<void> {
-  logger.info(`getEmbedTokenById`);
+  logger.warn(`getEmbedTokenById`);
 
   try {
     const id = req.params.embedTokenId;
@@ -133,7 +133,7 @@ export async function getEmbedTokenById(req: any, res: any, next: any): Promise<
         message: 'A EmbedToken fetched successfully',
         payload: embedToken
       });
-      logger.warn(`A EmbedToken fetched successfully`);
+      logger.info(`A EmbedToken fetched successfully`);
     } else {
       res.status(404).json({
         success: true,
@@ -142,7 +142,7 @@ export async function getEmbedTokenById(req: any, res: any, next: any): Promise<
       logger.fatal(`No valid entry found for provided embedTokenId`);
     }
   } catch (err) {
-    logger.warn(err);
+    logger.error(err);
     res.status(500).json({
       success: false,
       message: err

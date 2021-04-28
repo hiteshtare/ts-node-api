@@ -92,7 +92,7 @@ function connectToCosmos() {
   const COSMOS_dbName = process.env.DNA_CUSTOM_ANALYTICS_COSMOS_DBNAME;
   const COSMOS_collectionName = process.env.DNA_CUSTOM_ANALYTICS_COSMOS_COLLECTIONNAME;
 
-  logger.info(`COSMOS_connectionString: ${COSMOS_connectionString}`);
+  // logger.info(`COSMOS_connectionString: ${COSMOS_connectionString}`);
   logger.info(`COSMOS_dbName: ${COSMOS_dbName}`);
   logger.info(`COSMOS_collectionName: ${COSMOS_collectionName}`);
 
