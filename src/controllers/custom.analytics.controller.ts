@@ -1,6 +1,6 @@
 // Import node modules
 import mongoose = require('mongoose');
-import * as request from "request-promise";
+// import * as request from "request-promise";
 import * as _ from "lodash";
 import * as crypto from 'crypto';
 mongoose.Promise = global.Promise

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLoggerLevel = exports.setLoggerLevel = void 0;
-const index_1 = require("./../config/index");
 const log4js_1 = require("log4js");
 const dotenv_1 = require("dotenv");
+const index_1 = require("./../config/index");
 dotenv_1.config();
 const _logger = getLoggerLevel();
 function setLoggerLevel() {

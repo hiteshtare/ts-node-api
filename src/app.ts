@@ -5,7 +5,7 @@ import morgan = require('morgan');
 import bodyParser = require('body-parser');
 import path = require('path');
 import dotenv = require('dotenv');
-import cors = require('cors')
+// import cors = require('cors');
 mongoose.Promise = global.Promise
 
 // Import custom modules
@@ -79,7 +79,7 @@ app.use((error: any, req: any, res: any, next: any) => {
   });
 });
 
-const port = process.env.port || process.env.PORT || 6000;
+const port = process.env.port || process.env.PORT || 7000;
 app.listen(port, () => {
   logger.warn(`Listening on port: ${port}`);
 });

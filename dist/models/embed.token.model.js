@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmbedTokenSchema = void 0;
 const mongoose = require("mongoose");
+const dotenv_1 = require("dotenv");
+dotenv_1.config();
 exports.EmbedTokenSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     systemUserId: String,

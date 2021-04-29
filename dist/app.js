@@ -46,7 +46,7 @@ app.use((error, req, res, next) => {
         }
     });
 });
-const port = process.env.port || process.env.PORT || 6000;
+const port = process.env.port || process.env.PORT || 7000;
 app.listen(port, () => {
     logger.warn(`Listening on port: ${port}`);
 });
