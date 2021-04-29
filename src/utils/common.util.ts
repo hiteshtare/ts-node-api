@@ -1,8 +1,9 @@
-import { APP_CONFIG } from './../config/index';
 // Import node modules
 import { Logger } from 'log4js';
 import { getLogger } from 'log4js';
 import { config } from 'dotenv';
+
+import { APP_CONFIG } from './../config/index';
 
 // Import bot configuration/variables from .env file in root folder
 config();

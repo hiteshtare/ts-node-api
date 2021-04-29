@@ -1,4 +1,9 @@
+// Import node modules
 import * as mongoose from 'mongoose';
+import { config } from 'dotenv';
+
+// Import bot configuration/variables from .env file in root folder
+config();
 
 export const EmbedTokenSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
