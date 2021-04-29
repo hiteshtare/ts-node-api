@@ -12,6 +12,7 @@ mongoose.Promise = global.Promise
 import { APP_CONFIG } from './config/index';
 import customAnalyticsRouter from './routes/custom.analytics.route';
 import { getLoggerLevel, setLoggerLevel } from './utils/common.util';
+import fetch_collection_name from './middlewares/cosmosdb.middleware';
 
 // Import bot configuration/variables from .env file in root folder
 const ENV_FILE = path.join(__dirname, '.env');
@@ -61,6 +62,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(fetch_collection_name);
+
 // Routes which should handle requests
 app.use("/api/nam/customeranalytics", customAnalyticsRouter);
 
@@ -90,11 +93,11 @@ function connectToCosmos() {
 
   const COSMOS_connectionString = process.env.DNA_CUSTOM_ANALYTICS_COSMOS_CONNECTIONSTRING;
   const COSMOS_dbName = process.env.DNA_CUSTOM_ANALYTICS_COSMOS_DBNAME;
-  const COSMOS_collectionName = process.env.DNA_CUSTOM_ANALYTICS_COSMOS_COLLECTIONNAME;
+  // const COSMOS_collectionName = process.env.DNA_CUSTOM_ANALYTICS_COSMOS_COLLECTIONNAME;
 
   // logger.info(`COSMOS_connectionString: ${COSMOS_connectionString}`);
   logger.info(`COSMOS_dbName: ${COSMOS_dbName}`);
-  logger.info(`COSMOS_collectionName: ${COSMOS_collectionName}`);
+  // logger.info(`COSMOS_collectionName: ${COSMOS_collectionName}`);
 
   mongoose.connect(`${COSMOS_connectionString}`, {
     dbName: COSMOS_dbName,

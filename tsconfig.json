@@ -17,6 +17,7 @@
     "src/controllers/custom.analytics.controller.ts",
     "src/models/embed.token.model.ts",
     "src/routes/custom.analytics.route.ts",
-    "src/utils/common.util.ts"
+    "src/utils/common.util.ts",
+    "src/middlewares/cosmosdb.middleware.ts"
   ]
 }
